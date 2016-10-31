@@ -1,0 +1,152 @@
+Output : 
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:orientation="vertical" 
+ android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+ <TextView
+  android:layout_height="wrap_content"
+  android:text="Custom ListView Contents"
+  android:gravity="center_vertical|center_horizontal"
+  android:layout_width="fill_parent" />
+  <ListView 
+   android:id="@+id/ListView01" 
+   android:layout_height="wrap_content"
+   android:layout_width="fill_parent"/>
+</LinearLayout>
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:orientation="vertical" 
+ android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+  <TextView android:id="@+id/name"
+  android:textSize="14sp" 
+  android:textStyle="bold" 
+  android:textColor="#FFFF00" 
+  android:layout_width="wrap_content" 
+  android:layout_height="wrap_content"/>
+ <TextView android:id="@+id/cityState" 
+  android:layout_width="wrap_content" 
+  android:layout_height="wrap_content"/>
+ <TextView android:id="@+id/phone" 
+  android:layout_width="wrap_content" 
+  android:layout_height="wrap_content"/>
+</LinearLayout>
+
+ public class SearchResults {
+ private String name = "";
+ private String phone = "";
+
+ public void setName(String name) {
+  this.name = name;
+ }
+
+ public String getName() {
+  return name;
+ }
+
+ public void setPhone(String phone) {
+  this.phone = phone;
+ }
+
+ public String getPhone() {
+  return phone;
+ }
+}
+
+public class MyCustomBaseAdapter extends BaseAdapter {
+ private static ArrayList<SearchResults> searchArrayList;
+ 
+ private LayoutInflater mInflater;
+
+ public MyCustomBaseAdapter(Context context, ArrayList<SearchResults> results) {
+  searchArrayList = results;
+  mInflater = LayoutInflater.from(context);
+ }
+
+ public int getCount() {
+  return searchArrayList.size();
+ }
+
+ public Object getItem(int position) {
+  return searchArrayList.get(position);
+ }
+
+ public long getItemId(int position) {
+  return position;
+ }
+
+ public View getView(int position, View convertView, ViewGroup parent) {
+  ViewHolder holder;
+  if (convertView == null) {
+   convertView = mInflater.inflate(R.layout.custom_row_view, null);
+   holder = new ViewHolder();
+   holder.txtName = (TextView) convertView.findViewById(R.id.name);
+   holder.txtPhone = (TextView) convertView.findViewById(R.id.phone);
+
+   convertView.setTag(holder);
+  } else {
+   holder = (ViewHolder) convertView.getTag();
+  }
+  
+  holder.txtName.setText(searchArrayList.get(position).getName());
+  holder.txtPhone.setText(searchArrayList.get(position).getPhone());
+
+  return convertView;
+ }
+
+ static class ViewHolder {
+  TextView txtName;
+  TextView txtPhone;
+ }
+}
+
+public class CustomListView extends Activity {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        
+        ArrayList<SearchResults> searchResults = GetSearchResults();
+        
+        final ListView lv1 = (ListView) findViewById(R.id.ListView01);
+        lv1.setAdapter(new MyCustomBaseAdapter(this, searchResults));
+        
+        lv1.setOnItemClickListener(new OnItemClickListener() {
+         @Override
+         public void onItemClick(AdapterView<?> a, View v, int position, long id) { 
+          Object o = lv1.getItemAtPosition(position);
+          SearchResults fullObject = (SearchResults)o;
+          Toast.makeText(ListViewBlogPost.this, "You have chosen: " + " " + fullObject.getName(), Toast.LENGTH_LONG).show();
+         }  
+        });
+    }
+    
+    private ArrayList<SearchResults> GetSearchResults(){
+     ArrayList<SearchResults> results = new ArrayList<SearchResults>();
+     
+     SearchResults sr1 = new SearchResults();
+     sr1.setName("April");
+     sr1.setPhone("9915898888");
+     results.add(sr1);
+     
+     sr1 = new SearchResults();
+     sr1.setName("Pop");
+     sr1.setPhone("898568452");
+     results.add(sr1);
+     
+     sr1 = new SearchResults();
+     sr1.setName("Steve");
+     sr1.setPhone("9856898562");
+     results.add(sr1);
+     
+     sr1 = new SearchResults();
+     sr1.setName("Jack");
+     sr1.setPhone("9852632145");
+     results.add(sr1);
+     
+     return results;
+    }
+}
